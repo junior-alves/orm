@@ -36,7 +36,7 @@ $texto = 'zla bla bla';
 $nome[] = 'joao';
 $nome[] = 'joao';
 $nome[] = 'joao';
-$model->insert(array('texto' => $texto, 'nome' => $nome));
+$model->create(array('texto' => $texto, 'nome' => $nome, 'ativo' => 2));
 
 print_r($model);
 

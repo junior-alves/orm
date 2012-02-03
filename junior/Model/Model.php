@@ -76,13 +76,31 @@ class Model{
 	 * Persiste um ou mais registros do model 
 	 * na tabela do banco.
 	 */
-	public function insert($data = null)
+	public function create($data = null)
 	{
+		//$data = array_merge($this->_getDefault(), $data);
+		
+		$this->_normalizeData($data, 'create');
+		
 		$this->setDataModel($data);
 		
-		//print_r($this);
+		extract($this->modelData['table']);
 		
-		//$this->_db->renderInstruction($this->modelData, 'create');
+		unset($columns[$pk]);
+		
+		$columns = array_keys($columns);
+		
+		$renderParams = array(
+								'pk' => $pk,
+								'tableName' => $this->tableName,
+								'columns' => $columns,
+								'data' => $data);
+		
+		// extract($this->modelData);
+// 		
+		// $renderParams = array_merge(compact('table', 'data'), $renderParams);
+
+		$this->_db->renderInstruction($renderParams, 'create');
 	}
 	
 	/**
@@ -171,7 +189,7 @@ class Model{
 		
 		$columns = & $this->modelData['table']['columns'];
 		
-		$this->modelData['data'][$this->name] = array();
+		//$this->modelData['data'][$this->name] = array();
 		$tmpData = & $this->modelData['data'][$this->name];
 
 		foreach($data as $fieldName => $fieldValue)
@@ -182,7 +200,15 @@ class Model{
 				$tmpData[$fieldName] = $data[$fieldName];
 		}
 		
-		$this->_normalizeData($tmpData, 'create');
+		//$this->_normalizeData($tmpData, 'create');
+	}
+	
+	public function getDataModel()
+	{
+		if(!isset($this->modelData['data'][$this->name]))
+			return false;
+		
+		return $this->modelData['data'][$this->name];
 	}
 	
 	/**
@@ -221,5 +247,42 @@ class Model{
 				
 			break;		
 		}
+	}
+	
+	/**
+	 * Retorna a colunas que tem valor default definidos.
+	 */
+	private function _getDefault()
+	{
+		$columns = $this->modelData['table']['columns'];
+		
+		$data = array();
+		
+		foreach($columns as $field => $value)
+		{
+			if(!empty($value['default']) && $value['default'] !== null)
+				$data[$field] = $value['default'];
+		}
+		
+		return $data;
+	}
+	
+	/**
+	 * Retorna todos os campos aos quais 
+	 * não se tem um valor default definido.
+	 */
+	private function _getEmptyFields()
+	{
+		$columns = $this->modelData['table']['columns'];
+		
+		$data = array();
+		
+		foreach($columns as $field => $value)
+		{
+			if(empty($value['default']))
+				$data[$field] = $value['default'];
+		}
+		
+		return $data;
 	}
 }

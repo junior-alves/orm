@@ -102,45 +102,80 @@ class DB extends PDO{
 	
 	/**
 	 * Direciona para o método apropriado 
-	 * de renderização de acordo com o tipo.
+	 * de renderização de acordo com o tipo, 
+	 * retorna um array com o sql da renderização 
+	 * e com um array
 	 * 
-	 * @param array $data -> Array contendo os dados 
+	 * @param array $renderParams -> Array contendo os dados 
 	 * para se montar a instrução.
 	 * @param string $type -> String contendo o nome do tipo de ação.
 	 */
-	public function renderInstruction(&$data, $type)
+	public function renderInstruction(&$renderParams, $type)
 	{
 		$renderType = 'render'.ucfirst(strtolower($type));
 		
-		return $this->$renderType($data);
+		return $this->$renderType($renderParams);
 	}
 	
 	/**
 	 * Faz a renderização(montagem) da instrução 
 	 * sql para a ação create.
 	 * 
-	 * @param array $data -> Array com os dados para renderização.
+	 * @param array $renderParams -> Array com os dados para renderização.
 	 */
-	protected function renderCreate(&$data)
+	protected function renderCreate(&$renderParams)
 	{
-		unset($data['data'][$data['table']['pk']]);
+		//print_r($renderParams);
 		
-		$sql = 'INSERT INTO {$tableName} ';
+		extract($renderParams);
 		
-		$sql .= '('.implode(',', array_keys($data['data'])).') VALUES(';
+		unset($data[$pk]);
+		//unset($columns[array_search($pk, $columns)]);
 		
-		$implodeValues = function($value)
+		$fields = array_keys($data);
+		//$values = array_values($data);
+		
+		$implodeValues = array();
+		
+		$sql = "INSERT INTO {$tableName} ";
+		
+		$sql .= '('.implode(',', $columns).') VALUES(';
+		
+		//$count = count(reset($values));
+		
+		foreach($fields as $index => $field)
 		{
-			if(is_array($value))
+			$field = $columns[0];
+			
+			print_r($field);
+			
+			foreach($data as $value)
 			{
-				return '(' . implode(',', $value) . ')';
+				print_r( $data[$field]);
+				//$key = key($value);
+				$implodeValues[$index][] = $data[$field];
+				//unset( $value[$key]);
 			}
-		};
+			
+			unset($columns[0]);
+			
+			//$implodeValues[$index] = '(' . implode(',', $implodeValues[$index]) . ')';
+		}
 		
-		$sql .= implode(',', array_map($implodeValues, array_values($data['data'])));
 		
+		// $implodeValues = function($value)
+		// {
+			// if(is_array($value))
+			// {
+				// return '(' . implode(',', $value) . ')';
+			// }
+		// };
+// 		
+		$sql .= implode(',', $implodeValues);
+// 		
 		$sql .= ')';
-		
+// 		
 		echo $sql;
+		print_r($implodeValues);
 	}
 }
