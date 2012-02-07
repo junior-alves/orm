@@ -23,21 +23,30 @@ DB::connection('default', DB::MYSQL_DRIVER, 'root', '', 'localhost', 'mydb');
 //Config::connection('default', DB::MYSQL_DRIVER, 'root', '', 'localhost');
 //Config::connection('default2', DB::MYSQL_DRIVER, 'root2', '', 'localhost2');
 
-
-class Cliente extends Model
+class Produto extends  Model
 {
 	
 }
 
+class Cliente extends Model
+{
+	protected $dependents = array('Produto');
+}
+
 $model = new Cliente();
 
-$texto[] = 'zla bla bla';
 $texto = 'zla bla bla';
-$nome[] = 'joao';
-$nome[] = 'joao';
-$nome[] = 'joao';
-$model->create(array('texto' => $texto, 'nome' => $nome, 'ativo' => 2));
+$nome[] = 'joao1';
+$nome[] = 'joao2';
+$nome[] = 'joao3';
+$create = $model->create(array(
+					'texto' => $texto, 
+					'nome' => $nome, 
+					'pipoca' => 1,
+					'email' => 'jr290488@gmail.com'));
+										
+var_dump($model->rowCount());
 
-print_r($model);
+//print_r($model);
 
 print_r(round((microtime(true) - $t) * 1000, 2).' ms');

@@ -44,6 +44,45 @@ class Model{
 	protected $modelData = array();
 	
 	/**
+	 * Associa o model atual com um 
+	 * ou mais models.
+	 * 
+	 * Associação simples, assumirá que 
+	 * o model associado ao model atual 
+	 * contém um campo com a seguinte estrutura:
+	 * 
+	 * nomeTabelaModelAtual_fk.
+	 * 
+	 * protected $bindModels = array('Perfil', 'Comentarios');
+	 * 
+	 * Associação detalhada:
+	 * 
+	 * protected $bindModels = array(
+	 * 			'Cliente',
+	 * 			'Usuario' => array(
+	 * 				'fk' => 'Perfil_fk',
+	 * 				'dependent' => true
+	 * 			)
+	 * 		);
+	 * 
+	 * 'fk' => Nome da chave extrangeira no model Usuario.
+	 * 'dependent' => Se definido como true, quando um Perfil 
+	 * for criado ou modificado, também modificará ou criará 
+	 * a relação no model Usuario, válido apenas a um registro
+	 * por vez.
+	 */
+	protected $dependents = array();
+	
+	/**
+	 * Armazena o nome de campos 
+	 * que devem ter seu valor 
+	 * original preservado.
+	 * 
+	 * Obs: Nome da propriedade está ruim.
+	 */
+	private $noParse = array();
+	
+	/**
 	* Armazena a classe do banco a ser usado.
 	* 
 	* @var DB
@@ -73,16 +112,34 @@ class Model{
 	}
 	
 	/**
+	 * Metodo magico call.
+	 */
+	public function __call($name, $arguments)
+	{
+		if($this->_db !== null)
+			return $this->_db->$name($arguments);
+	}
+	
+	/**
 	 * Persiste um ou mais registros do model 
 	 * na tabela do banco.
+	 * 
+	 * @return boolean -> TRUE / FALSE
 	 */
-	public function create($data = null)
+	public function create($dataParam = null, $cascade = true)
 	{
-		//$data = array_merge($this->_getDefault(), $data);
+		$dataDiff = $dataParam;
 		
-		$this->_normalizeData($data, 'create');
+		$this->_filter($dataParam);
 		
-		$this->setDataModel($data);
+		if(count($dataParam) <= 0)
+			return false;
+		
+		$dataDiff = (array_diff_key($dataDiff, $dataParam));
+		
+		$this->_normalizeData($dataParam, 'create');
+		
+		$this->setDataModel($dataParam);
 		
 		extract($this->modelData['table']);
 		
@@ -90,17 +147,45 @@ class Model{
 		
 		$columns = array_keys($columns);
 		
+		$data = array_combine(array_keys($dataParam), array_values($this->modelData['data'][$this->tableName]));
+		
 		$renderParams = array(
 								'pk' => $pk,
+								'noParse' => $this->noParse,
 								'tableName' => $this->tableName,
 								'columns' => $columns,
 								'data' => $data);
 		
-		// extract($this->modelData);
-// 		
-		// $renderParams = array_merge(compact('table', 'data'), $renderParams);
+		$executeData = $this->_db->renderInstruction($renderParams, 'create');
 
-		$this->_db->renderInstruction($renderParams, 'create');
+		if($this->_db->executeRenderData($executeData))
+		{
+			if(count($dataDiff) > 0 && $cascade)
+			{
+				foreach($this->dependents as $key => $value)
+				{
+					if(is_array($value))
+					{
+						$m = new $key();
+						$fk = !isset($value['fk'])? $this->tableName.'_fk' : $value['fk'];
+					}
+					else
+					{
+						$m = new $value();
+						$fk = $this->tableName.'_fk';
+					}
+					
+					$dataDiff[$fk] = $this->_db->lastInsertId();
+					
+					if(!$m->create($dataDiff))
+						return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -182,25 +267,23 @@ class Model{
 	 * @param array $data -> Array contendo os dados a serem setados.
 	 * da tabela no model.
 	 */
-	public function setDataModel($data = array(), $value = null)
+	public function setDataModel(&$data = array(), $value = null)
 	{
 		if(!is_array($data) && $value !== null)
 			$data = array($data => $value);
 		
 		$columns = & $this->modelData['table']['columns'];
 		
-		//$this->modelData['data'][$this->name] = array();
 		$tmpData = & $this->modelData['data'][$this->name];
 
 		foreach($data as $fieldName => $fieldValue)
 		{
-			//$default = ($fieldValue['null'] && empty($fieldValue['default']))? null: $fieldValue['default'];
-			//$this->modelData['data'][$fieldName] = (isset($data[$fieldName]))? $data[$fieldName] : $default;
 			if(isset($columns[$fieldName]))
+			{
 				$tmpData[$fieldName] = $data[$fieldName];
+			}
+				
 		}
-		
-		//$this->_normalizeData($tmpData, 'create');
 	}
 	
 	public function getDataModel()
@@ -229,24 +312,24 @@ class Model{
 				array_multisort($data);
 				
 				$size  = count(end($data));
-				
-				$transform = function(&$data, $size)
-				{
-					if(!is_array($data))
-						return array_pad(array(), $size, $data);
-					
-					if(count($data) < $size)
-						return array_pad($data, $size, end($data));
-					
-					return $data;
-				};
-				
-				$tmp_data = array_map($transform, $data, array_pad(array(), count($data), $size));
+
+				$tmp_data = array_map(array(&$this, '_transform'), $data, array_pad(array(), count($data), $size));
 				
 				$data = (array_combine(array_keys($data), $tmp_data));
 				
 			break;		
 		}
+	}
+	
+	private function _transform($data, $size)
+	{	
+		if(!is_array($data))
+			return array_pad(array(), $size, $data);
+		
+		if(count($data) < $size)
+			return array_pad($data, $size, end($data));
+		
+		return $data;
 	}
 	
 	/**
@@ -284,5 +367,30 @@ class Model{
 		}
 		
 		return $data;
+	}
+	
+	/**
+	 * 
+	 */
+	private function _filter(&$data)
+	{
+		$columns = $this->modelData['table']['columns'];
+		
+		foreach($data as $key => $value)
+		{
+			if(!isset($columns[$key]))
+			{
+				unset($data[$key]);
+				continue;
+			}
+			
+			if(is_array($value) && isset($value['value']))
+				$data[$key] = $value['value'];
+			
+			if(is_array($value) 
+			&& isset($value['parse']) 
+			&& $value['parse'] === false)
+				$this->noParse[] = $key;
+		}
 	}
 }

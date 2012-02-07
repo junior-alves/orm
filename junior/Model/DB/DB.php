@@ -15,6 +15,21 @@ class DB extends PDO{
 	private static $_connectionsMaps;
 	
 	/**
+	 * Guarda o PDOStatement executado
+	 * nos metodos.
+	 */
+	private $_stm;
+	
+	/**
+	 * Metodo magico call.
+	 */
+	public function __call($name, $arguments)
+	{
+		if($this->_stm !== null)
+			return $this->_stm->$name($arguments);
+	}
+	
+	/**
 	 * Adiciona uma ou mais conexões para o model.
 	 * 
 	 * @param string $name -> Nome da conexão.
@@ -125,57 +140,83 @@ class DB extends PDO{
 	 */
 	protected function renderCreate(&$renderParams)
 	{
-		//print_r($renderParams);
-		
 		extract($renderParams);
 		
 		unset($data[$pk]);
-		//unset($columns[array_search($pk, $columns)]);
 		
-		$fields = array_keys($data);
-		//$values = array_values($data);
+		$renderData = $fields = $values = $dataParams = array();
 		
-		$implodeValues = array();
+		$count = count(reset($data));
+		
+		$index = 0;
+		
+		while($index < $count)
+		{
+			foreach($data as $field => $value)
+			{
+				if(($key = array_search($field, $columns)) !== false)
+				{
+					$fields[$key] = $field;
+					
+					if(in_array($field, $noParse))
+					{
+						$values[$index][$key] = $value[$index];
+						continue;
+					}
+					
+					$values[$index][$key] = ' ? ';
+					$dataParams[$index][$key] = $value[$index];
+					ksort($values[$index]);
+					ksort($dataParams[$index]);
+				}
+			}
+			
+			$values[$index] = '(' . implode(',', $values[$index]) . ')';
+			
+			$index++;
+		}
+		
+		foreach($dataParams as $key => $data)
+		{
+			foreach($data as $value)
+			{
+				$renderData['data'][] = $value;
+				unset($dataParams[$key]);
+			}
+		}
+		
+		ksort($fields);
 		
 		$sql = "INSERT INTO {$tableName} ";
 		
-		$sql .= '('.implode(',', $columns).') VALUES(';
+		$sql .= '('.implode(',', $fields).') VALUES(';
 		
-		//$count = count(reset($values));
-		
-		foreach($fields as $index => $field)
-		{
-			$field = $columns[0];
-			
-			print_r($field);
-			
-			foreach($data as $value)
-			{
-				print_r( $data[$field]);
-				//$key = key($value);
-				$implodeValues[$index][] = $data[$field];
-				//unset( $value[$key]);
-			}
-			
-			unset($columns[0]);
-			
-			//$implodeValues[$index] = '(' . implode(',', $implodeValues[$index]) . ')';
-		}
-		
-		
-		// $implodeValues = function($value)
-		// {
-			// if(is_array($value))
-			// {
-				// return '(' . implode(',', $value) . ')';
-			// }
-		// };
-// 		
-		$sql .= implode(',', $implodeValues);
-// 		
+		$sql .= implode(',', $values);
+ 		
 		$sql .= ')';
-// 		
-		echo $sql;
-		print_r($implodeValues);
+		
+		$sql = str_replace('((', '(',  str_replace('))', ')', $sql));
+		
+		$renderData['sql'] = $sql;
+		
+		return $renderData;
+	}
+	
+	/**
+	 * Executa a instrução montada pelo 
+	 * método renderInstruction.
+	 * 
+	 * @return PDOStatement
+	 */
+	public function executeRenderData($executeData)
+	{
+		if(!isset($executeData['sql']) || !isset($executeData['data']))
+			return false;
+		
+		$params = (!is_array($executeData['data']))? array() : $executeData['data'];
+		
+		$this->_stm = $this->prepare($executeData['sql']);
+		
+		return $this->_stm->execute($params);
 	}
 }
