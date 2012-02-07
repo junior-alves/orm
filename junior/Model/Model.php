@@ -65,7 +65,8 @@ class Model{
 	 * 			)
 	 * 		);
 	 * 
-	 * 'fk' => Nome da chave extrangeira no model Usuario.
+	 * 'fk' => (Opcional) Nome da chave extrangeira no model 
+	 * Usuario, se não informado usará a estrutura "nomeTabelaModelAtual_fk".
 	 * 'dependent' => Se definido como true, quando um Perfil 
 	 * for criado ou modificado, também modificará ou criará 
 	 * a relação no model Usuario, válido apenas a um registro
@@ -150,11 +151,11 @@ class Model{
 		$data = array_combine(array_keys($dataParam), array_values($this->modelData['data'][$this->tableName]));
 		
 		$renderParams = array(
-								'pk' => $pk,
-								'noParse' => $this->noParse,
-								'tableName' => $this->tableName,
-								'columns' => $columns,
-								'data' => $data);
+							'pk' => $pk,
+							'noParse' => $this->noParse,
+							'tableName' => $this->tableName,
+							'columns' => $columns,
+							'data' => $data);
 		
 		$executeData = $this->_db->renderInstruction($renderParams, 'create');
 
@@ -177,7 +178,7 @@ class Model{
 					
 					$dataDiff[$fk] = $this->_db->lastInsertId();
 					
-					if(!$m->create($dataDiff))
+					if(!$m->create($dataDiff, $cascade))
 						return false;
 				}
 			}
