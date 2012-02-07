@@ -1,0 +1,1 @@
+a:2:{s:7:"columns";a:3:{s:2:"id";a:3:{s:4:"type";i:1;s:7:"default";N;s:4:"null";b:0;}s:10:"Cliente_fk";a:3:{s:4:"type";i:1;s:7:"default";N;s:4:"null";b:0;}s:5:"ATIVO";a:3:{s:4:"type";i:5;s:7:"default";s:1:"1";s:4:"null";b:0;}}s:2:"pk";s:2:"id";}
