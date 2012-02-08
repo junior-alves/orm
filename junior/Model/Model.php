@@ -33,6 +33,11 @@ class Model{
 	public $tableName = false;
 	
 	/**
+	 * Array com a lista de erros da validação.
+	 */
+	public $validationErrors = array();
+	
+	/**
 	 * Define o nome da conexão a 
 	 * ser usada pelo model.
 	 */
@@ -76,6 +81,33 @@ class Model{
 	protected $dependents = array();
 	
 	/**
+	 * Array contendo quais o 
+	 * campos desse model devem 
+	 * ser validados ao serem 
+	 * setados.
+	 * 
+	 * O array deve ter a seguinte estrutura:
+	 * - indice -> Nome do campo que se deseja validar.
+	 * - valor -> String com um tipo de validação ou array com vários tipos de validações.
+	 * 
+	 * Validações pré-definidas
+	 * - notEmpty -> Verifica se o valor não está vazio.
+	 * - notNull -> Verifica se o valor não é nulo.
+	 * - isNumeric -> Verifica se o valor é um número.
+	 * - exp -> Para uma verificação personalizada utilizando expressões regulares.
+	 * - message -> Mensagem de retorno em caso de erro.
+	 * 
+	 * protected $validade = array(
+	 * 		'nome' => 'notEmpty',
+	 * 		'cpf' => array(
+	 * 					'notEmpty', 
+	 * 					'isNumeric' => array('message' => 'CPF deve ser um número.')
+	 *					),
+	 * 		'cep' => array(
+	 * 			'notEmpty', 
+	 * 			'exp' => '/^[0-9]{5}-[0-9]{3}$/i'
+	 * 		)
+	 * );
 	 * 
 	 */
 	protected $validate = array();
@@ -116,15 +148,6 @@ class Model{
 		$this->modelData['data'] = array();
 		
 		$this->modelData['table'] = $this->_db->getStructureTable($this->tableName);
-	}
-	
-	/**
-	 * Metodo magico call.
-	 */
-	public function __call($name, $arguments)
-	{
-		if($this->_db !== null)
-			return $this->_db->$name($arguments);
 	}
 	
 	/**
@@ -319,6 +342,15 @@ class Model{
 			return false;
 		
 		return $this->modelData['data'][$this->name];
+	}
+	
+	/**
+	 * Metodo mágico call.
+	 */
+	public function __call($name, $arguments)
+	{
+		if($this->_db !== null)
+			return $this->_db->$name($arguments);
 	}
 	
 	/**

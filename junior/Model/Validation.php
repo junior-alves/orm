@@ -18,11 +18,11 @@ class Validation{
 			break;
 			
 			case 'notEmpty':
-				return (bool)self::_testExp('/.+/i', $value);
+				return !(bool)empty($value);
 			break;
 			
 			case 'isNumeric':
-				return (bool)self::_testExp('/^[0-9]+$/i', $value);
+				return (bool)is_numeric($value);
 			break;
 			
 			case 'exp':
