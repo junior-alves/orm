@@ -7,6 +7,7 @@ $dir = realpath(dirname(__FILE__));
 include_once($dir.'/Config/Config.php');
 include_once($dir.'/Cache/Cache.php');
 include_once($dir.'/DB/DB.php');
+include_once($dir.'/Validation.php');
 
 /**
  * Classe resposavel por realizar todas 
@@ -75,6 +76,11 @@ class Model{
 	protected $dependents = array();
 	
 	/**
+	 * 
+	 */
+	protected $validate = array();
+	
+	/**
 	 * Armazena o nome de campos 
 	 * que devem ter seu valor 
 	 * original preservado.
@@ -127,8 +133,11 @@ class Model{
 	 * 
 	 * @return boolean -> TRUE / FALSE
 	 */
-	public function create($dataParam = null, $cascade = true)
+	public function create($dataParam, $cascade = true)
 	{
+		if(!is_array($dataParam)) 
+			return false;
+		
 		$dataDiff = $dataParam;
 		
 		$this->_filter($dataParam);
@@ -158,9 +167,16 @@ class Model{
 							'data' => $data);
 		
 		$executeData = $this->_db->renderInstruction($renderParams, 'create');
+		
+		$this->inTransaction = $this->_db->inTransaction();
+		
+		if(!$this->inTransaction)
+			$this->_db->beginTransaction();
 
 		if($this->_db->executeRenderData($executeData))
 		{
+			$data = & $this->modelData['data'][$this->name];
+			
 			if(count($dataDiff) > 0 && $cascade)
 			{
 				foreach($this->dependents as $key => $value)
@@ -179,14 +195,24 @@ class Model{
 					$dataDiff[$fk] = $this->_db->lastInsertId();
 					
 					if(!$m->create($dataDiff, $cascade))
+					{
+						if($this->inTransaction)
+							$this->_db->rollBack();
 						return false;
+					}
 				}
 			}
 			
-			return true;
+			if($this->inTransaction)
+				$this->_db->commit();
+			
+			return $data = true;
 		}
 		
-		return false;
+		if($this->inTransaction)
+			$this->_db->rollBack();
+		
+		return $data = false;
 	}
 	
 	/**

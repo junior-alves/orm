@@ -33,20 +33,22 @@ class Cliente extends Model
 	protected $dependents = array('Produto');
 }
 
-$model = new Cliente();
+$cliente = new Cliente();
 
 $texto = 'zla bla bla';
 $nome[] = 'joao1';
 $nome[] = 'joao2';
-$nome[] = 'joao3';
-$create = $model->create(array(
-					'texto' => $texto, 
-					'nome' => $nome, 
-					'pipoca' => 1,
-					'email' => 'jr290488@gmail.com'));
-										
-var_dump($model->rowCount());
-
-//print_r($model);
+$nome = 'joao3';
+// $create = $cliente->create(array(
+					// 'texto' => $texto, 
+					// 'nome' => $nome, 
+					// 'pipoca' => 1,
+					// 'email' => 'jr290488@gmail.com'));
+// 										
+// var_dump($create);
+echo '<pre>';
+print_r($cliente);
 
 print_r(round((microtime(true) - $t) * 1000, 2).' ms');
+
+echo '</pre>';
