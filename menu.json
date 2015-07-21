@@ -14,6 +14,13 @@
     {
         "icone": "Home.png",
         "view": "webview",
+        "titulo": "Page",
+        "url": "https://rawgit.com/junior-alves/orm/master/page.html",
+        "bounce": 0
+    },
+    {
+        "icone": "Home.png",
+        "view": "webview",
         "titulo": "Google",
         "url": "http://www.google.com/",
         "bounce": 0
