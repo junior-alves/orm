@@ -22,7 +22,7 @@
         "icone": "Home.png",
         "view": "webview",
         "titulo": "Html Estático",
-        "url": "https://raw.github.com/junior-alves/orm/edit/master/page.html",
+        "url": "https://raw.githubusercontent.com/junior-alves/orm/master/page.html",
         "bounce": 0
     },
     {
