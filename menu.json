@@ -16,7 +16,7 @@
         "view": "webview",
         "titulo": "Google",
         "url": "http://www.google.com/",
-        "bounce": 1
+        "bounce": 0
     },
     {
         "icone": "Home.png",
