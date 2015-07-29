@@ -21,6 +21,13 @@
     {
         "icone": "Home.png",
         "view": "webview",
+        "titulo": "Gazeta Online",
+        "url": "http://gazetaonline.globo.com",
+        "bounce": 0
+    },
+    {
+        "icone": "Home.png",
+        "view": "webview",
         "titulo": "Google",
         "url": "page.html",
         "bounce": 0
