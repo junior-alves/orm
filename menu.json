@@ -8,6 +8,13 @@
     },
     {
         "icone": "Home.png",
+        "view": "webview",
+        "titulo": "O Imparcial",
+        "url": "http://www.oimparcial.com.br",
+        "bounce": 0
+    },
+    {
+        "icone": "Home.png",
         "view": "minhasEdicoes",
         "titulo": "MinhasEdições"
     },
