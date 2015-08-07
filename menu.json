@@ -28,6 +28,13 @@
     {
         "icone": "Home.png",
         "view": "webview",
+        "titulo": "Edicoes Online",
+        "url": "edicoes.html",
+        "bounce": 0
+    },
+    {
+        "icone": "Home.png",
+        "view": "webview",
         "titulo": "Gazeta Online",
         "url": "http://gazetaonline.globo.com",
         "bounce": 0
