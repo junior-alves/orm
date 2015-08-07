@@ -1,16 +1,15 @@
 [
     {
         "icone": "Home.png",
-        "view": "pageview",
-        "titulo": "Facebook",
-        "url": "http://facebook.com/",
-        "total": 3
+        "view": "webview",
+        "titulo": "Home",
+        "url": "http://gazetaonline.globo.com/"
     },
     {
         "icone": "Home.png",
         "view": "webview",
-        "titulo": "O Imparcial",
-        "url": "http://www.oimparcial.com.br",
+        "titulo": "Edição Impressa",
+        "url": "http://agazeta.html5v2.fivepress.com.br",
         "bounce": 0
     },
     {
@@ -21,36 +20,22 @@
     {
         "icone": "Home.png",
         "view": "webview",
-        "titulo": "Page",
-        "url": "page.html",
+        "titulo": "Assine",
+        "url": "http://agazeta.fivewall.com.br",
         "bounce": 0
     },
     {
         "icone": "Home.png",
         "view": "webview",
-        "titulo": "Edicoes Online",
-        "url": "edicoes.html",
+        "titulo": "Login",
+        "url": "login.html",
         "bounce": 0
     },
     {
         "icone": "Home.png",
         "view": "webview",
-        "titulo": "Gazeta Online",
-        "url": "http://gazetaonline.globo.com",
+        "titulo": "Sobre",
+        "url": "sobre.html",
         "bounce": 0
-    },
-    {
-        "icone": "Home.png",
-        "view": "webview",
-        "titulo": "Google",
-        "url": "http://google.com",
-        "bounce": 0
-    },
-    {
-        "icone": "Home.png",
-        "view": "pageview",
-        "titulo": "Twitter",
-        "url": "http://www.twitter.com/",
-        "total": 5
     }
 ]
