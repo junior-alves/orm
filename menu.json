@@ -9,7 +9,7 @@
         "icone": "Home.png",
         "view": "webview",
         "titulo": "Edição Impressa",
-        "url": "http://agazeta.html5v2.fivepress.com.br",
+        "url": "http://agazeta.html5v2.fivepress.com.br/?app=1",
         "bounce": 0
     },
     {
