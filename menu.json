@@ -37,5 +37,12 @@
         "titulo": "Sobre",
         "url": "sobre.html",
         "bounce": 0
+    },
+    {
+        "icone": "Home.png",
+        "view": "webview",
+        "titulo": "Local",
+        "url": "edicoes.html",
+        "bounce": 0
     }
 ]
