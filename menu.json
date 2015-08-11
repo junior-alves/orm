@@ -1,9 +1,10 @@
 [
     {
         "icone": "Home.png",
-        "view": "webview",
+        "view": "pageview",
         "titulo": "Home",
-        "url": "http://gazetaonline.globo.com/"
+        "url": "http://gazetaonline.globo.com/",
+        "total": 5
     },
     {
         "icone": "Home.png",
