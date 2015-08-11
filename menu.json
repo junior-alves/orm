@@ -15,7 +15,8 @@
     {
         "icone": "Home.png",
         "view": "minhasEdicoes",
-        "titulo": "Minhas Edições"
+        "titulo": "Minhas Edições",
+        "offline": 1
     },
     {
         "icone": "Home.png",
@@ -36,7 +37,8 @@
         "view": "webview",
         "titulo": "Sobre",
         "url": "sobre.html",
-        "bounce": 0
+        "bounce": 0,
+        "offline": 1
     },
     {
         "icone": "Home.png",
