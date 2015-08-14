@@ -6,34 +6,34 @@
         "url": "http://gazetaonline.globo.com/"
     },
     {
-        "icone": "Home.png",
+        "icone": "Calendar-Day-of-Week.png",
         "view": "webview",
         "titulo": "Edição Impressa",
         "url": "http://agazeta.html5v2.fivepress.com.br/?app=1",
         "bounce": 0
     },
     {
-        "icone": "Home.png",
+        "icone": "Basket.png",
         "view": "minhasEdicoes",
         "titulo": "Minhas Edições",
         "offline": 1
     },
     {
-        "icone": "Home.png",
+        "icone": "Network.png",
         "view": "webview",
         "titulo": "Assine",
         "url": "http://agazeta.fivewall.com.br",
         "bounce": 0
     },
     {
-        "icone": "Home.png",
+        "icone": "Lock.png",
         "view": "webview",
         "titulo": "Login",
         "url": "login.html",
         "bounce": 0
     },
     {
-        "icone": "Home.png",
+        "icone": "Skyscraper.png",
         "view": "webview",
         "titulo": "Sobre",
         "url": "sobre.html",
