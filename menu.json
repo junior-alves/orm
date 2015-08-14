@@ -6,14 +6,14 @@
         "url": "http://gazetaonline.globo.com/"
     },
     {
-        "icone": "Calendar-Day-of-Week.png",
+        "icone": "Newspaper.png",
         "view": "webview",
         "titulo": "Edição Impressa",
         "url": "http://agazeta.html5v2.fivepress.com.br/?app=1",
         "bounce": 0
     },
     {
-        "icone": "Basket.png",
+        "icone": "Tag.png",
         "view": "minhasEdicoes",
         "titulo": "Minhas Edições",
         "offline": 1
@@ -26,7 +26,7 @@
         "bounce": 0
     },
     {
-        "icone": "Lock.png",
+        "icone": "User.png",
         "view": "webview",
         "titulo": "Login",
         "url": "login.html",
