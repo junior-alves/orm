@@ -44,8 +44,8 @@
     {
         "icone": "Home.png",
         "view": "webview",
-        "titulo": "Local",
-        "url": "edicoes.html",
+        "titulo": "Exemplo Navegação",
+        "url": "https://rawgit.com/junior-alves/orm/master/page.html",
         "bounce": 0
     }
 ]
