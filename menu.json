@@ -3,7 +3,8 @@
         "icone": "Home.png",
         "view": "webview",
         "titulo": "Home",
-        "url": "http://gazetaonline.globo.com/"
+        "url": "http://gazetaonline.globo.com/",
+        "bounce": 0
     },
     {
         "icone": "Newspaper.png",
